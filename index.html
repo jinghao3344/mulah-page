@@ -161,6 +161,11 @@
       const year = document.getElementById("year").value;
       const email = document.getElementById("email").value;
       
+      if (!/^[A-Za-z\s]+$/.test(name)) {
+        alert("Please enter a valid name with letters and spaces only.");
+        return false;
+      }
+      
       const birthday = `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
       localStorage.setItem("name", name);
       localStorage.setItem("birthday", birthday);
