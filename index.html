@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loyalty Points</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #333;
+      text-align: center;
+    }
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      height: 1136px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      color: #ff6600;
+      margin-bottom: 20px;
+    }
+    h1, h2 {
+      font-size: 24px;
+      margin: 10px 0;
+    }
+    p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    input, select {
+      width: calc(100% - 40px);
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background-color: #ff6600;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+    }
+    footer {
+      font-size: 14px;
+      margin-top: 20px;
+      color: #666;
+    }
+    footer a {
+      text-decoration: none;
+      color: #ff6600;
+    }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .checkbox-container label {
+      margin-left: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page 1 -->
+  <div class="container" id="page1">
+    <div class="logo">MULAH</div>
+    <h1>Hello, Welcome!</h1>
+    <p>Check Your Loyalty Points & Rewards</p>
+    <form onsubmit="return validatePhoneNumber(event)">
+      <div>
+        <select id="countryCode" required>
+          <option value="+60">+60</option>
+          <option value="+65">+65</option>
+          <option value="+62">+62</option>
+        </select>
+        <input type="text" id="phone" placeholder="Enter your mobile number" required />
+      </div>
+      <button type="submit">Check Loyalty Points</button>
+    </form>
+    <footer>Powered by <a href="https://www.mulahrewards.com" target="_blank">MulahRewards.com</a></footer>
+  </div>
+
+  <!-- Page 2 -->
+  <div class="container" id="page2" style="display: none;">
+    <div class="logo">MULAH</div>
+    <h2>Registration</h2>
+    <p>Please fill up your details.</p>
+    <form onsubmit="return goToPage3(event)">
+      <div>
+        <label>Name</label><br>
+        <input type="text" id="name" placeholder="Enter Name" required />
+      </div>
+      <div>
+        <label>Birthday</label><br>
+        <input type="number" id="day" placeholder="DD" min="1" max="31" required />
+        <input type="number" id="month" placeholder="MM" min="1" max="12" required />
+        <input type="number" id="year" placeholder="YYYY" min="1900" max="2100" required />
+      </div>
+      <div>
+        <label>Email</label><br>
+        <input type="email" id="email" placeholder="Email Address" />
+      </div>
+      <div class="checkbox-container">
+        <input type="checkbox" id="noEmail" onclick="toggleEmailField()" />
+        <label for="noEmail">I don't have an email address</label>
+      </div>
+      <button type="submit">Continue</button>
+    </form>
+    <footer>Powered by <a href="https://www.mulahrewards.com" target="_blank">MulahRewards.com</a></footer>
+  </div>
+
+  <!-- Page 3 -->
+  <div class="container" id="page3" style="display: none;">
+    <div class="logo">MULAH</div>
+    <h2>Your Details</h2>
+    <p><strong>Phone Number:</strong> <span id="displayPhone"></span></p>
+    <p><strong>Name:</strong> <span id="displayName"></span></p>
+    <p><strong>Birthday:</strong> <span id="displayBirthday"></span></p>
+    <p><strong>Email:</strong> <span id="displayEmail"></span></p>
+    <footer>Powered by <a href="https://www.mulahrewards.com" target="_blank">MulahRewards.com</a></footer>
+  </div>
+
+  <script>
+    // Page 1: Validate phone number
+    function validatePhoneNumber(event) {
+      event.preventDefault();
+      const phone = document.getElementById("phone").value;
+      const countryCode = document.getElementById("countryCode").value;
+      const fullPhoneNumber = countryCode + phone;
+
+      if (!/^\d+$/.test(phone)) {
+        alert("Invalid phone number. Please enter numbers only.");
+      } else {
+        localStorage.setItem("phone", fullPhoneNumber);
+        document.getElementById("page1").style.display = "none";
+        document.getElementById("page2").style.display = "block";
+      }
+    }
+
+    // Page 2: Save data and navigate to Page 3
+    function goToPage3(event) {
+      event.preventDefault();
+      const name = document.getElementById("name").value;
+      const day = document.getElementById("day").value;
+      const month = document.getElementById("month").value;
+      const year = document.getElementById("year").value;
+      const email = document.getElementById("email").value;
+      
+      const birthday = `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+      localStorage.setItem("name", name);
+      localStorage.setItem("birthday", birthday);
+      
+      // If email is provided, save it
+      if (email && !document.getElementById("noEmail").checked) {
+        localStorage.setItem("email", email);
+      } else {
+        localStorage.setItem("email", "No email provided");
+      }
+
+      document.getElementById("page2").style.display = "none";
+      document.getElementById("page3").style.display = "block";
+
+      // Populate Page 3
+      document.getElementById("displayPhone").innerText = localStorage.getItem("phone");
+      document.getElementById("displayName").innerText = localStorage.getItem("name");
+      document.getElementById("displayBirthday").innerText = localStorage.getItem("birthday");
+      document.getElementById("displayEmail").innerText = localStorage.getItem("email");
+    }
+
+    // Toggle email field visibility based on checkbox
+    function toggleEmailField() {
+      const emailField = document.getElementById("email");
+      const noEmailCheckbox = document.getElementById("noEmail");
+      if (noEmailCheckbox.checked) {
+        emailField.disabled = true;
+        emailField.value = ""; // Clear value when disabled
+      } else {
+        emailField.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+</html>
